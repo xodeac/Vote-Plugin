@@ -17,27 +17,42 @@
  defined( 'ABSPATH' ) or die("NOT ALLOWED !");
 
  class MrdeveloperPlugin
- {  
+ {       
+        public $plugin;
         function __construct(){
-            add_action( 'init', array($this,'vote') );
+            $this->plugin = plugin_basename(__FILE__);
         }
-        function activate(){
-            $this->vote();
-            flush_rewrite_rules();   
-        }
+        public function register(){
+            add_action( 'admin_menu', array($this,'add_admin_pages'));
+            add_filter("plugin_action_links_$this->plugin", array($this,'settings_links'));
 
-        function deactivate(){
-            flush_rewrite_rules();
         }
-
-        function vote(){
-            register_post_type( 'Votes', ['public'=> true , 'label' => "Voter"] );
+        public function settings_links($links){
+            $setting_link_1 = '<a href="admin.php?page=hk_vote">Settings</a>';
+            $setting_link_2 = '<a href="https://www.amdaniglobal.com">Visit Website</a>';
+            array_push($links, $setting_link_1 , $setting_link_2);
+            return $links;
         }
-
-        
+        public function add_admin_pages(){
+            add_menu_page( 'HK-VOTE', 'VOTE', 'manage_options', 'hk_vote', array($this,'admin_index'), 'dashicons-admin-users', '110' );
+        }
+        public function admin_index(){
+            require_once plugin_dir_path( __FILE__ ) . 'temp/index.php';
+        }
  }
 
- if( class_exists( 'MrdeveloperPlugin' ) ){ $mrdeveloperplugin = new MrdeveloperPlugin(); }
+ if( class_exists( 'MrdeveloperPlugin' ) )
+ { 
+     $mrdeveloperplugin = new MrdeveloperPlugin(); 
+     $mrdeveloperplugin->register();
+ }
 
- register_activation_hook( __FILE__ , array( $mrdeveloperplugin , 'activate' ) );
- register_deactivation_hook( __FILE__, array( $mrdeveloperplugin, 'deactivation' ) );
+ // ACTIVATION 
+
+ require_once plugin_dir_path( __FILE__ ) . 'inc/activation_file.php';
+ register_activation_hook( __FILE__ , array( 'PluginActivationClass' , 'activate' ) );
+
+// DEACTIVATION
+
+ require_once plugin_dir_path( __FILE__ ) . 'inc/deactivation_file.php';
+ register_deactivation_hook( __FILE__, array( 'PluginDeactivationClass', 'deactivation' ) );

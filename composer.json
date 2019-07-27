@@ -1,0 +1,19 @@
+{
+    "name": "nb/hkvote",
+    "description": "vote for change",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "xodeac",
+            "email": "hk@amdaniglobal.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Inc\\": "./inc"
+        }
+    }
+}
